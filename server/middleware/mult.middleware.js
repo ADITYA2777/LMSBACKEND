@@ -11,7 +11,6 @@ const upload = multer({
     filename: (_req, file, cb) => {
       cb(null, file.originalname);
     },
-  }),
   fileFilter: (_req, file, cb) => {
     let ext = path.extname(file.originalname);
 
@@ -28,6 +27,8 @@ const upload = multer({
 
     cb(null, true);
   },
+  }),
+  
 });
 
 export default upload;
