@@ -42,7 +42,7 @@ const resgister = async (req, res, next) => {
   }
 
   //Todo: Files  upload
-  // console.log("Files Details >", JSON.stringify(req.file));
+  console.log("Files Details >", JSON.stringify(req.file));
   if (req.file) {
     console.log(req.file);
     try {

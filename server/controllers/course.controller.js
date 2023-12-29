@@ -1,5 +1,7 @@
 import Course from "../models/course.model.js";
 import AppError from "../utils/error.utls.js";
+import cloudinary from "cloudinary";
+import fs from "fs/promises";
 
    const getAllCourses = async function(req,res,next) {
      
@@ -32,5 +34,112 @@ console.log(course);
     });
 }
 
-export { getAllCourses, getLecturesByCoursesId };
+const createCourses = async function(req,res,next) {
+  
+  const { tittle, discription, category, createdBy } = req.body;
+
+if (!tittle || !discription || !!category || !createdBy) {
+  return next(new AppError("All fields are required"));
+}
+  const course = await Course.create({
+    tittle,
+    discription,
+    category,
+    createdBy,
+    thumbnail: {
+      public_id:"Dummy",
+      secure_url:"Dummy",
+    },
+  });
+
+ if (!course) {
+   return next(new AppError("Course is not created ,please try again", 500));
+ }
+
+  if (req.file) {
+    try {
+      const result = await cloudinary.v2.uploader.upload(req.file.path, {
+        folder: "lms"
+      });
+
+      console.log(JSON.stringify(result));
+      if (result) {
+        course.thumbnail.public_id = result.public_id;
+        course.thumbnail.secure_url = result.secure_url;
+      }
+
+      fs.rm(`uploads/${req.file.filename}`)
+
+      
+    } catch (e) {
+      return next(new AppError("e.message",500))
+    }
+  }
+
+  await course.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Courses created successfully!!",
+    course,
+  });
+
+}
+const updatesCourses = async function (req,res,next) {
+  
+  try {
+    // Extracting the course id from the request params
+    const { id } = req.params;
+
+    // Finding the course using the course id
+    const course = await Course.findByIdAndUpdate(
+      id,
+      {
+        $set: req.body, // This will only update the fields which are present
+      },
+      {
+        runValidators: true, // This will run the validation checks on the new data
+      }
+    );
+
+    // If no course found then send the response for the same
+    if (!course) {
+      return next(new AppError("Invalid course id or course not found.", 400));
+    }
+  } catch (e) {
+    return next(new AppError("e.message",500))
+  }
+  // Sending the response after success
+  res.status(200).json({
+    success: true,
+    message: "Course updated successfully",
+  });
+}
+const removesCourses = async function(req,res,next) {
+  try {
+    // Extracting id from the request parameters
+    const { id } = req.params;
+
+    // Finding the course via the course ID
+    const course = await Course.findById(id);
+
+    // If course not find send the message as stated below
+    if (!course) {
+      return next(new AppError("Course with given id does not exist.", 404));
+    }
+  } catch (e) {
+    return next(new AppError("e.message", 500));
+  }
+
+  // Remove course
+  await Course.remove();
+
+  // Send the message as response
+  res.status(200).json({
+    success: true,
+    message: "Course deleted successfully",
+  });
+}
+
+export { getAllCourses, getLecturesByCoursesId, createCourses ,updatesCourses,removesCourses };
 
