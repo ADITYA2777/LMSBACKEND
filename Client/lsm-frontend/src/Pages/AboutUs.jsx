@@ -52,8 +52,8 @@ const AboutUs = () => {
               />
               {/* for writting the quotes */}
               <p className="text-xl text-gray-200">
-                "Education is the most powerful tool you can use to change the
-                world."
+                Education is the most powerful tool you can use to change the
+                world.
               </p>
               {/* for personality name */}
               <h3 className="text-2xl font-semibold">Nelson Mandela</h3>
@@ -78,8 +78,8 @@ const AboutUs = () => {
               />
               {/* for writting the quotes */}
               <p className="text-xl text-gray-200">
-                "Learning gives creativity, creativity leads to thinking,
-                thinking provides knowledge, knowledge makes you great."
+                Learning gives creativity, creativity leads to thinking,
+                thinking provides knowledge, knowledge makes you great.
               </p>
               {/* for personality name */}
               <h3 className="text-2xl font-semibold">A. P. J. Abdul Kalam</h3>
@@ -104,8 +104,8 @@ const AboutUs = () => {
               />
               {/* for writting the quotes */}
               <p className="text-xl text-gray-200">
-                "Education is not the learning of facts, but the training of the
-                mind to think."
+                Education is not the learning of facts, but the training of the
+                mind to think.
               </p>
               {/* for personality name */}
               <h3 className="text-2xl font-semibold">Albert Einstein</h3>
@@ -130,7 +130,7 @@ const AboutUs = () => {
               />
               {/* for writting the quotes */}
               <p className="text-xl text-gray-200">
-                "Innovation distinguishes between a leader and a follower."
+                Innovation distinguishes between a leader and a follower.
               </p>
               {/* for personality name */}
               <h3 className="text-2xl font-semibold">Steve Jobs</h3>
@@ -155,9 +155,9 @@ const AboutUs = () => {
               />
               {/* for writting the quotes */}
               <p className="text-xl text-gray-200">
-                "Technology is just a tool. In terms of getting the kids working
+                Technology is just a tool. In terms of getting the kids working
                 together and motivating them, the teacher is the most
-                important."
+                important.
               </p>
               {/* for personality name */}
               <h3 className="text-2xl font-semibold">Bill Gates</h3>

@@ -68,19 +68,19 @@ const HomeLayout = ({ children }) => {
             <li>
               <Link to="/aboutus">About us</Link>
             </li>
-            {!isLoggedIn && (
+            {isLoggedIn && (
               <li className="absolute bottom-4 w-[90%]">
                 <div className=" w-full flex items-center justify-center">
                   <button className="bg-teal-950 text-white px-4 py-1 rounded-md font-semibold w-full">
                     <Link to="/login">Login</Link>
                   </button>
                   <button className="bg-pink-600 px-4 py-1 rounded-md font-semibold text-white w-full">
-                    <Link to="/login">Signup</Link>
+                    <Link to="/signup">Signup</Link>
                   </button>
                 </div>
               </li>
             )}
-            {isLoggedIn && (
+            {!isLoggedIn && (
               <li className="absolute bottom-4 w-[90%]">
                 <div className=" w-full flex items-center justify-center">
                   <button className="bg-teal-950 text-white px-4 py-1 rounded-md font-semibold w-full">
