@@ -2,7 +2,11 @@
 
 import { Router } from "express";
 import { addLecturesToCoursesById, createCourses, getAllCourses, getLecturesByCoursesId, removesCourses, updatesCourses } from "../controllers/course.controller.js";
-import { authorizedRoles, authorizedSubscriptied, isLogged } from "../middleware/auth.middleware.js";
+import {
+  authorizeRoles,
+  authorizeSubscribers,
+  isLoggedIn,
+} from "../middleware/auth.middleware.js";
 import upload from "../middleware/mult.middleware.js";
 
 const router = Router();
@@ -10,18 +14,20 @@ const router = Router();
 router
   .route("/")
   .get(getAllCourses)
-  .post(isLogged,
-    authorizedRoles("ADMIN"),
+  .post(
+    isLoggedIn,
+    authorizeRoles("ADMIN"),
     upload.single("thumbnail"),
-    createCourses);
+    createCourses
+  );
 router
   .route("/:id")
-  .get(isLogged,authorizedSubscriptied, getLecturesByCoursesId)
-  .put(isLogged, authorizedRoles("ADMIN"), updatesCourses)
-  .delete(isLogged, authorizedRoles("ADMIN"), removesCourses)
+  .get(isLoggedIn, authorizeSubscribers, getLecturesByCoursesId)
+  .put(isLoggedIn, authorizeRoles("ADMIN"), updatesCourses)
+  .delete(isLoggedIn, authorizeRoles("ADMIN"), removesCourses)
   .post(
-    isLogged,
-    authorizedRoles("ADMIN"),
+    isLoggedIn,
+    authorizeRoles("ADMIN"),
     upload.single("lecture"),
     addLecturesToCoursesById
   );

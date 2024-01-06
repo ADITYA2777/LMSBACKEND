@@ -8,7 +8,7 @@ const initialState = {
   role: localStorage.getItem("role") || "",
   data: localStorage.getItem("data") || {},
 };
-
+// resgister;
 
 export const createAccount = createAsyncThunk("/auth/signup", async (data) => {
   try {

@@ -1,5 +1,5 @@
 import User from "../models/user.model.js";
-import AppError from "../utils/error.utls.js";
+import AppError from "../utils/AppError.js";
 import cloudinary from "cloudinary";
 import fs from "fs/promises";
 import sendEmail from "../utils/sendEmail.js";
@@ -10,8 +10,9 @@ const cookiesOptions = {
   httpOnly: true,
   secure: true,
 };
-
 const resgister = async (req, res, next) => {
+console.log("Before Cloudinary Upload in register");
+
   const { fullName, email, password } = req.body;
 
   if (!fullName || !email || !password) {
@@ -23,6 +24,9 @@ const resgister = async (req, res, next) => {
   if (userExists) {
     return next(new AppError("EMAIL IS ALREADY EXISTS", 400));
   }
+
+    console.log("User data before creation:", { fullName, email, password });
+
 
   const user = await User.create({
     fullName,
@@ -40,6 +44,8 @@ const resgister = async (req, res, next) => {
       new AppError("User registration failed, please try again later", 400)
     );
   }
+    console.log("User data after creation:", user);
+
 
   //Todo: Files  upload
   console.log("Files Details >", JSON.stringify(req.file));
@@ -54,20 +60,21 @@ const resgister = async (req, res, next) => {
         crop: "fill",
       });
 
+     
       if (result) {
+        // Set the public_id and secure_url in DB
         user.avatar.public_id = result.public_id;
         user.avatar.secure_url = result.secure_url;
 
-        // Remove files from server
-        await fs.rm(`uploads/${req.file.filename}`);
+        // After successful upload remove the file from local storage
+        fs.rm(`uploads/${req.file.filename}`);
       }
     } catch (e) {
       return next(
-        new AppError(e || "Files not uploaded. Please try again!", 500)
+        new AppError( e || "Files not uploaded. Please try again!", 500)
       );
     }
   }
-
   await user.save();
 
   user.password = undefined;
@@ -81,7 +88,12 @@ const resgister = async (req, res, next) => {
     message: "USER REGISTER  SUCCESSFULLY",
     user,
   });
+  console.log("After Cloudinary Upload in register");
+
 };
+
+
+
 
 const login = async (req, res,next) => {
   try {
@@ -333,3 +345,4 @@ export {
   changePassword,
   updatesUser,
 };
+

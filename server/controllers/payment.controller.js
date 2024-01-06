@@ -1,4 +1,4 @@
-import AppError from "../utils/error.utls.js";
+import AppError from "../utils/AppError.js";
 import User from "../models/user.model.js";
 import { razorpay } from "../server.js";
 import crypto from "crypto";

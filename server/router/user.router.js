@@ -9,18 +9,17 @@ import {
   resgister,
   updatesUser,
 } from "../controllers/user.controller.js";
-import { isLogged } from "../middleware/auth.middleware.js";
+import { isLoggedIn } from "../middleware/auth.middleware.js";
 import upload from "../middleware/mult.middleware.js";
 
 const router = Router();
-
 router.post("/register",upload.single("avatar"),resgister);
 router.post("/login", login);
 router.get("/logout", logout);
-router.get("/me", isLogged, getProflies);
+router.get("/me", isLoggedIn, getProflies);
 router.post("/reset",forgotPassword);
 router.post("/reset/:resetToken", resetPassword);
-router.post("/change-password", isLogged,changePassword);
-router.put("/update", isLogged,upload.single("avatar"),updatesUser);
+router.post("/change-password", isLoggedIn, changePassword);
+router.put("/update", isLoggedIn, upload.single("avatar"), updatesUser);
 
 export default router;
