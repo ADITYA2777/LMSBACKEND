@@ -5,7 +5,7 @@ const store = configureStore({
     reducer: {
         auth:authSlicesReducer,
     },
-    devTools: true,
+    // devTools: true,
 });
 
 export default store;

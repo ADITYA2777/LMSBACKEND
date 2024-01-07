@@ -26,7 +26,7 @@ app.use("/ping", (req, res) => {
   res.send("pong");
 });
 
-app.use('/api/v1/user/', userRouter)
+app.use('/api/v1/user/',userRouter)
 app.use("/api/v1/courses",courseRouter);
 app.use("/api/v1/payment",paymentRouter);
 

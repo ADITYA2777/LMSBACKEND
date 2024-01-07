@@ -95,7 +95,7 @@ console.log("Before Cloudinary Upload in register");
 
 
 
-const login = async (req, res,next) => {
+const login = async (req,res,next) => {
   try {
     const { email, password } = req.body;
 
@@ -127,6 +127,7 @@ const login = async (req, res,next) => {
 };
 
 const logout = (req, res) => {
+  
   res.cookie("token", null, {
     secure: true,
     maxAge: 0,
