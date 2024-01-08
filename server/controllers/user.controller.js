@@ -92,9 +92,6 @@ console.log("Before Cloudinary Upload in register");
 
 };
 
-
-
-
 const login = async (req,res,next) => {
   try {
     const { email, password } = req.body;
@@ -126,18 +123,21 @@ const login = async (req,res,next) => {
   }
 };
 
-const logout = (req, res) => {
-  
+const logout =(async (_req, res, _next) => {
+  // Setting the cookie value to null
   res.cookie("token", null, {
-    secure: true,
+    secure: process.env.NODE_ENV === "production" ? true : false,
     maxAge: 0,
     httpOnly: true,
   });
+
+  // Sending the response
   res.status(200).json({
     success: true,
-    message: "USER LOGOUT SUCCESSFULLY",
+    message: "User logged out successfully",
   });
-};
+});
+
 const getProflies = async (req, res) => {
   try {
     const userId = req.user.id;

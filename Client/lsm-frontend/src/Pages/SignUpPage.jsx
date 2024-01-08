@@ -1,11 +1,10 @@
-
-
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { BsPersonCircle } from "react-icons/bs";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
+import { isEmail, isPassword } from "../Helper/regexMatcher";
 import HomeLayout from "../Layouts/HomeLayout";
 import { createAccount } from "../Redux/Slices/AuthSlices";
 
@@ -74,21 +73,13 @@ const SignUpPage = () => {
     }
 
     // email validation using regex
-    if (
-      !signupData.email.match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      )
-    ) {
+    if (!isEmail(signupData.email)) {
       toast.error("Invalid email id");
       return;
     }
 
     // password validation using regex
-    if (
-      !signupData.password.match(
-        /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/
-      )
-    ) {
+    if (!isPassword(signupData.password)) {
       toast.error(
         "Minimum password length should be 8 with Uppercase, Lowercase, Number and Symbol"
       );
@@ -104,7 +95,7 @@ const SignUpPage = () => {
 
     // calling create account action
     const response = await dispatch(createAccount(formData));
-      console.log( "aditya",response);
+    console.log("aditya", response);
 
     // redirect to login page if true
     if (response?.payload?.success) {

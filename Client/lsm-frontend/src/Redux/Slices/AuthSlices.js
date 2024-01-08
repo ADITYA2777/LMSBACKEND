@@ -3,20 +3,11 @@ import toast from "react-hot-toast";
 
 import axiosInstance from "../../Helper/axoisinstance";
 
-// const initialState = {
-//   isLoggedIn: localStorage.getItem("isLoggedIn") || false,
-//   role: localStorage.getItem("role") || "",
-//   data: localStorage.getItem("data") || {},
-// };
-
 const initialState = {
-  isLoggedIn: localStorage.getItem("isLoggedIn") === "true", // Convert to boolean
+  isLoggedIn: localStorage.getItem("isLoggedIn") || false,
+  data:(localStorage.getItem("data")) || {},
   role: localStorage.getItem("role") || "",
-  data: localStorage.getItem("data")
-    ? JSON.parse(localStorage.getItem("data"))
-    : {},
 };
-
 
 export const createAccount = createAsyncThunk("/auth/signup", async (data) => {
   try {
@@ -57,23 +48,23 @@ export const login = createAsyncThunk("/auth/login", async (data) => {
   }
 });
 
-export const logout = createAsyncThunk("/auth/logout", async () => {
+export const logout = createAsyncThunk("auth/logout", async () => {
   try {
-    let res = axiosInstance.post("user/logout");
+    let res = axiosInstance.post("/user/logout");
 
-    toast.promise(res, {
-      loading: "Wait! Logout in  progress..",
+    await toast.promise(res, {
+      loading: "Loading...",
       success: (data) => {
         return data?.data?.message;
       },
-      error: "Failed to logout in ..",
+      error: "Failed to log out",
     });
 
     // getting response resolved here
     res = await res;
     return res.data;
   } catch (error) {
-    toast.error(error?.response?.data?.message);
+    toast.error(error.message);
   }
 });
 
@@ -82,22 +73,35 @@ const authSlices = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(login.fulfilled, (state, action) => {
-      localStorage.setItem("data", JSON.stringify(action?.payload?.user));
-      localStorage.setItem("isLoggedIn", true);
-      localStorage.setItem("role", action?.payload?.user?.role);
-      state.data = action?.payload?.user;
-      state.role = action?.payload?.user?.role;
-    })
+    builder
+      // for user login
+      .addCase(login.fulfilled, (state, action) => {
+        localStorage.setItem("data", JSON.stringify(action?.payload?.user));
+        localStorage.setItem("isLoggedIn", true);
+        localStorage.setItem("role", action?.payload?.user?.role);
+        state.isLoggedIn = true;
+        state.data = action?.payload?.user;
+        state.role = action?.payload?.user?.role;
+      })
+      // for user logout
       .addCase(logout.fulfilled, (state) => {
         localStorage.clear();
-        state.data = {};
         state.isLoggedIn = false;
-        state.role = "";
-    })
+        state.data = {};
+      })
+      // for user details
+      // .addCase(getUserData.fulfilled, (state, action) => {
+      //   localStorage.setItem("data", JSON.stringify(action?.payload?.user));
+      //   localStorage.setItem("isLoggedIn", true);
+      //   state.isLoggedIn = true;
+      //   state.data = action?.payload?.user;
+      //   state.role = action?.payload?.user?.role;
+      // });
   },
 });
 
 // const {} = authSlices.actions
 export default authSlices.reducer;
+
+
 
