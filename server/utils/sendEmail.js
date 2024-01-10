@@ -14,12 +14,26 @@ const sendEmail = async function (email, subject, message) {
   });
 
   // send mail with defined transport object
-  await transporter.sendMail({
-    from: process.env.SMTP_FROM_EMAIL, // sender address
-    to: email, // user email
-    subject: subject, // Subject line
-    html: message, // html body
-  });
+  // await transporter.sendMail({
+  //   from: process.env.SMTP_FROM_EMAIL, // sender address
+  //   to: email, // user email
+  //   subject: subject, // Subject line
+  //   html: message, // html body
+  // });
+
+  try {
+    await transporter.sendMail({
+      from: process.env.SMTP_FROM_EMAIL,
+      to: email,
+      subject: subject,
+      html: message,
+    });
+    console.log("Email sent successfully");
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error; // rethrow the error to propagate it up the call stack
+  }
+
 };
 
 export default sendEmail;

@@ -14,7 +14,6 @@ const ContactPage = () => {
 
   function handleUserInput(e) {
     const { name, value } = e.target;
-    console.log("contact", name, value);
     setInputUser({
       ...inputUser,
       [name]: value,
@@ -36,14 +35,14 @@ const ContactPage = () => {
       return;
     }
     try {
-      const response = axiosInstance.post("/contact", ...inputUser);
+      const response = axiosInstance.post("/contact",inputUser);
       toast.promise(response, {
         loading: "Submitting your meassage ",
         success: "Form submiitted successfully",
         error: " Failed to submit the form ",
       });
       const contactResponse = await response;
-      console.log("result:", contactResponse);
+      console.log("result:",contactResponse);
       if (contactResponse?.data?.success) {
         setInputUser({
           name: "",
@@ -53,6 +52,7 @@ const ContactPage = () => {
       }
     } catch (error) {
       toast.error("Operation failed .....");
+      console.log("ErrorContact",error);
     }
   }
   return (
