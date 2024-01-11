@@ -30,6 +30,7 @@ router
 router
   .route("/:id")
   .get(isLoggedIn, authorizeSubscribers, getLecturesByCoursesId)
+  .get( getLecturesByCoursesId)
   .post(
     isLoggedIn,
     authorizeRoles("ADMIN"),

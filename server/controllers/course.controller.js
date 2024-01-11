@@ -5,7 +5,7 @@ import fs from "fs/promises";
 
 const getAllCourses = async function (req, res, next) {
   try {
-    const courses = await Course.findOne({}).select("-lectures");
+    const courses = await Course.find({}).select("-lectures");
 
     res.status(200).json({
       success: true,
@@ -13,7 +13,7 @@ const getAllCourses = async function (req, res, next) {
       courses,
     });
   } catch (e) {
-    next(new AppError("e.message", 500));
+   return  next(new AppError("e.message", 500));
   }
 };
 const getLecturesByCoursesId = async function (req, res, next) {
@@ -33,14 +33,14 @@ const getLecturesByCoursesId = async function (req, res, next) {
 };
 
 const createCourses = async function (req, res, next) {
-  const { tittle, discription, category, createdBy } = req.body;
+  const { title, description, category, createdBy } = req.body;
 
-  if (!tittle || !discription || !!category || !createdBy) {
+  if (!title || !description || !category || !createdBy) {
     return next(new AppError("All fields are required"));
   }
   const course = await Course.create({
-    tittle,
-    discription,
+    title,
+    description,
     category,
     createdBy,
     thumbnail: {
@@ -120,6 +120,7 @@ const removesCourses = async function (req, res, next) {
     if (!course) {
       return next(new AppError("Course with given id does not exist.", 404));
     }
+    
   } catch (e) {
     return next(new AppError("e.message", 500));
   }

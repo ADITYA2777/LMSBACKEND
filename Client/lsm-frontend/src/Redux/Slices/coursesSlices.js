@@ -6,18 +6,18 @@ import axiosInstance from "../../Helper/axoisinstance";
 const initialState = {
   coursesData: [],
 };
-
-export const getAllCourses = createAsyncThunk("/course/get", async () => {
+export const getAllCourses = createAsyncThunk("/courses/get", async () => {
   try {
-    const response = axiosInstance.get("/courses");
-    toast.promise(response, {
-      loading:"loading courses  data .....",
-      success:"Courese loaded successfully..",
-      error: "Failed to get the courses",
+    const response = await axiosInstance.get("/courses");
+    console.log("res info:", response);
+    toast.promise(Promise.resolve(response), {
+      success: "Courses loaded successfully.",
     });
-      return (await response).data.courses;
+    return response?.data?.courses;
   } catch (error) {
+    console.error("Error fetching courses:", error);
     toast.error(error?.response?.data?.message);
+    throw error;
   }
 });
 
@@ -25,14 +25,23 @@ const coursesSlices = createSlice({
   name: "courses",
   initialState,
   reducers: {},
-    extraReducers: (builder) => {
-        builder.addCase(getAllCourses.fulfilled, (state,action) => {
-            if (action.payload) {
-              console.log( "courses",action.payload);
-            state.coursesData = [...action.payload]
-          }
-      })
+  extraReducers: (builder) => {
+    builder.addCase(getAllCourses.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.coursesData = [...action.payload];
+        console.log("courses", action.payload);
+      }
+    });
   },
+  // extraReducers: (builder) => {
+  //   builder.addCase(getAllCourses.fulfilled, (state, action) => {
+  //     console.log("Payload:", action.payload);
+  //     if (action.payload && Array.isArray(action.payload)) {
+  //       state.coursesData = [...action.payload];
+  //       console.log("courses", action.payload);
+  //     }
+  //   });
+  // },
 });
 
 export default coursesSlices.reducer;
