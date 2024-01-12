@@ -69,6 +69,11 @@ const HomeLayout = ({ children }) => {
                 <Link to="/admin/dashborad"> Admin DashBoard </Link>
               </li>
             )}
+            {isLoggedIn && role === "ADMIN" && (
+              <li>
+                <Link to="/course/create"> Create New Courses </Link>
+              </li>
+            )}
             <li>
               <Link to="/courses">All Courese</Link>
             </li>

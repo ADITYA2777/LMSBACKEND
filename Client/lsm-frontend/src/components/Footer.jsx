@@ -10,7 +10,7 @@ const Footer = () => {
   const year = currentDate.getFullYear();
 
   return (
-    <footer className="relative left-0 bottom-0 flex flex-col h-[10vh] sm:flex-row py-5 items-center justify-between text-white bg-gray-800 ">
+    <footer className="relative  left-0 bottom-0 flex flex-col h-[10vh] sm:flex-row py-5 items-center justify-between text-white bg-gray-800 ">
       <section className="text-lg ">
         Copyright {year} | All rights reserved
       </section>

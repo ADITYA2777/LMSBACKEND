@@ -20,6 +20,34 @@ export const getAllCourses = createAsyncThunk("/courses/get", async () => {
     throw error;
   }
 });
+export const createNewCourses = createAsyncThunk(
+  "/course/create",
+  async (data) => {
+    try {
+      let formData = new FormData();
+      formData.append("title", data?.title);
+      formData.append("description", data?.description);
+      formData.append("category", data?.category);
+      formData.append("createdBy", data?.createdBy);
+      formData.append("thumbnail", data?.thumbnail);
+
+      const response = await axiosInstance.post("/courses", formData);
+
+      // The toast promise should only be awaited if you need to wait for it to complete.
+      // In this case, it might not be necessary, and you can remove it if it causes issues.
+      // If you do await it, make sure to use `await toast.promise` directly.
+
+      toast.success("Course created successfully");
+
+      return response.data;
+    } catch (error) {
+      console.error("Error creating course:", error);
+      toast.error("Failed to create course");
+      throw error;
+    }
+  }
+);
+
 
 const coursesSlices = createSlice({
   name: "courses",

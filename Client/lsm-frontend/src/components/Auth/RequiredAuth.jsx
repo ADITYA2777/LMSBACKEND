@@ -5,12 +5,12 @@ function RequiredAuth({ allowedRole }) {
   const { isLoggedIn, role } = useSelector((state) => state.auth);
 
   return isLoggedIn && allowedRole.find((myRoles) => myRoles === role) ? (
-    Outlet
+  <Outlet/>
   ) : isLoggedIn ? (
     <Navigate to="/denied" />
   ) : (
     <Navigate to="/login" />
-  )
+  );
 }
 
 export default RequiredAuth;
