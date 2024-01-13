@@ -5,7 +5,7 @@ import axiosInstance from "../../Helper/axoisinstance";
 
 const initialState = {
   isLoggedIn: localStorage.getItem("isLoggedIn") || false,
-  data:(localStorage.getItem("data")) || {},
+  data: localStorage.getItem("data")!== undefined ? JSON.parse(localStorage.getItem("data")) : {},
   role: localStorage.getItem("role") || "",
 };
 
@@ -68,6 +68,39 @@ export const logout = createAsyncThunk("auth/logout", async () => {
   }
 });
 
+export const updateProfile = createAsyncThunk(
+  "/user/update/profile",
+  async (data) => {
+    try {
+      console.log(data);
+      let res = axiosInstance.put(`user/update/${data[0]}`, data[1]);
+
+      await toast.promise(res, {
+        loading: "wait! profile is updating ....!!",
+        success: (data) => {
+          return data?.data?.message;
+        },
+        error: "Failed to update profile...",
+      });
+
+      // getting response resolved here
+      res = await res;
+      return res.data;
+    } catch (error) {
+      toast.error(error.message);
+    }
+  }
+);
+export const getUserData = createAsyncThunk("/user/details", async () => {
+  try {
+    let res = axiosInstance.get("user/me");
+    res = await res;
+    return res.data;
+  } catch (error) {
+    toast.error(error.message);
+  }
+});
+
 const authSlices = createSlice({
   name: "auth",
   initialState,
@@ -89,19 +122,16 @@ const authSlices = createSlice({
         state.isLoggedIn = false;
         state.data = {};
       })
-      // for user details
-      // .addCase(getUserData.fulfilled, (state, action) => {
-      //   localStorage.setItem("data", JSON.stringify(action?.payload?.user));
-      //   localStorage.setItem("isLoggedIn", true);
-      //   state.isLoggedIn = true;
-      //   state.data = action?.payload?.user;
-      //   state.role = action?.payload?.user?.role;
-      // });
+      .addCase(getUserData.fulfilled, (state, action) => {
+        if (!action?.payload?.user) return;
+        localStorage.setItem("data", JSON.stringify(action?.payload?.user));
+        localStorage.setItem("isLoggedIn", true);
+        state.isLoggedIn = true;
+        state.data = action?.payload?.user;
+        state.role = action?.payload?.user?.role;
+      });
   },
 });
 
 // const {} = authSlices.actions
 export default authSlices.reducer;
-
-
-

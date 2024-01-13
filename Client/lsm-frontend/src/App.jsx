@@ -10,7 +10,9 @@ import Denied from "./Pages/Denied";
 import Errorpage from "./Pages/Errorpage";
 import HomePage from "./Pages/HomePage";
 import LoginPage from "./Pages/LoginPage";
+import Profile from "./Pages/Profile";
 import SignUpPage from "./Pages/SignUpPage";
+import EditProfile from "./Pages/EditProfile";
 
 function App() {
   return (
@@ -30,7 +32,13 @@ function App() {
         <Route path="/denied" element={<Denied />}></Route>
 
         <Route element={<RequiredAuth allowedRole={["ADMIN"]} />}>
-          <Route path="/course/create" element={<CreateCourses/> } />
+          <Route path="/course/create" element={<CreateCourses />} />
+        </Route>
+
+
+        <Route element={<RequiredAuth allowedRole={["ADMIN","USER"]}/>}>
+          <Route path="/user/profile" element={<Profile />} />
+          <Route path="/user/editProfile" element={<EditProfile/>} />
         </Route>
 
         <Route path="*" element={<Errorpage />}></Route>
