@@ -11,7 +11,7 @@ const cookiesOptions = {
   secure: true,
 };
 const resgister = async (req, res, next) => {
-console.log("Before Cloudinary Upload in register");
+  console.log("Before Cloudinary Upload in register");
 
   const { fullName, email, password } = req.body;
 
@@ -25,8 +25,7 @@ console.log("Before Cloudinary Upload in register");
     return next(new AppError("EMAIL IS ALREADY EXISTS", 400));
   }
 
-    console.log("User data before creation:", { fullName, email, password });
-
+  console.log("User data before creation:", { fullName, email, password });
 
   const user = await User.create({
     fullName,
@@ -44,8 +43,7 @@ console.log("Before Cloudinary Upload in register");
       new AppError("User registration failed, please try again later", 400)
     );
   }
-    console.log("User data after creation:", user);
-
+  console.log("User data after creation:", user);
 
   //Todo: Files  upload
   console.log("Files Details >", JSON.stringify(req.file));
@@ -60,7 +58,6 @@ console.log("Before Cloudinary Upload in register");
         crop: "fill",
       });
 
-     
       if (result) {
         // Set the public_id and secure_url in DB
         user.avatar.public_id = result.public_id;
@@ -71,7 +68,7 @@ console.log("Before Cloudinary Upload in register");
       }
     } catch (e) {
       return next(
-        new AppError( e || "Files not uploaded. Please try again!", 500)
+        new AppError(e || "Files not uploaded. Please try again!", 500)
       );
     }
   }
@@ -89,10 +86,9 @@ console.log("Before Cloudinary Upload in register");
     user,
   });
   console.log("After Cloudinary Upload in register");
-
 };
 
-const login = async (req,res,next) => {
+const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
@@ -123,7 +119,7 @@ const login = async (req,res,next) => {
   }
 };
 
-const logout =(async (_req, res, _next) => {
+const logout = async (_req, res, _next) => {
   // Setting the cookie value to null
   res.cookie("token", null, {
     secure: process.env.NODE_ENV === "production" ? true : false,
@@ -136,7 +132,7 @@ const logout =(async (_req, res, _next) => {
     success: true,
     message: "User logged out successfully",
   });
-});
+};
 
 const getProflies = async (req, res) => {
   try {
@@ -346,4 +342,3 @@ export {
   changePassword,
   updatesUser,
 };
-

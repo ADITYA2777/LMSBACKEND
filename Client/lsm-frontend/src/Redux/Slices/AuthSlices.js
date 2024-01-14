@@ -75,7 +75,18 @@ export const updateProfile = createAsyncThunk(
       console.log(data);
       let res = axiosInstance.put(`user/update/${data[0]}`, data[1]);
 
-      await toast.promise(res, {
+      // await toast.promise(res, {
+      //   loading: "wait! profile is updating ....!!",
+      //   success: (data) => {
+      //     return data?.data?.message;
+      //   },
+      //   error: "Failed to update profile...",
+      // });
+
+      // getting response resolved here
+      // res = await res;
+      // return res.data;
+      const toastPromise = toast.promise(res, {
         loading: "wait! profile is updating ....!!",
         success: (data) => {
           return data?.data?.message;
@@ -83,11 +94,10 @@ export const updateProfile = createAsyncThunk(
         error: "Failed to update profile...",
       });
 
-      // getting response resolved here
-      res = await res;
-      return res.data;
+      await toastPromise;
     } catch (error) {
-      toast.error(error.message);
+      console.error(error);
+      toast.error(`Request failed with status code ${error.response?.status}`);
     }
   }
 );

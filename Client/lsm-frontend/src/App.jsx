@@ -13,6 +13,7 @@ import LoginPage from "./Pages/LoginPage";
 import Profile from "./Pages/Profile";
 import SignUpPage from "./Pages/SignUpPage";
 import EditProfile from "./Pages/EditProfile";
+import CheckoutPage from "./Pages/payment/CheckoutPage";
 
 function App() {
   return (
@@ -35,10 +36,10 @@ function App() {
           <Route path="/course/create" element={<CreateCourses />} />
         </Route>
 
-
-        <Route element={<RequiredAuth allowedRole={["ADMIN","USER"]}/>}>
+        <Route element={<RequiredAuth allowedRole={["ADMIN", "USER"]} />}>
           <Route path="/user/profile" element={<Profile />} />
-          <Route path="/user/editProfile" element={<EditProfile/>} />
+          <Route path="/user/editProfile" element={<EditProfile />} />
+          <Route path="/checkout" element={<CheckoutPage/>} />
         </Route>
 
         <Route path="*" element={<Errorpage />}></Route>
