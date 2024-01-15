@@ -6,14 +6,17 @@ import CoursesList from "./Courses/CoursesList";
 import CreateCourses from "./Courses/CreateCourses";
 import AboutUs from "./Pages/AboutUs";
 import ContactPage from "./Pages/ContactPage";
+import DisplayLecture from "./Pages/DashBord/DisplayLecture";
 import Denied from "./Pages/Denied";
+import EditProfile from "./Pages/EditProfile";
 import Errorpage from "./Pages/Errorpage";
 import HomePage from "./Pages/HomePage";
 import LoginPage from "./Pages/LoginPage";
+import CheckoutFailure from "./Pages/payment/CheckoutFailure";
+import CheckoutPage from "./Pages/payment/CheckoutPage";
+import CheckoutSuccess from "./Pages/payment/CheckoutSuccess";
 import Profile from "./Pages/Profile";
 import SignUpPage from "./Pages/SignUpPage";
-import EditProfile from "./Pages/EditProfile";
-import CheckoutPage from "./Pages/payment/CheckoutPage";
 
 function App() {
   return (
@@ -39,7 +42,10 @@ function App() {
         <Route element={<RequiredAuth allowedRole={["ADMIN", "USER"]} />}>
           <Route path="/user/profile" element={<Profile />} />
           <Route path="/user/editProfile" element={<EditProfile />} />
-          <Route path="/checkout" element={<CheckoutPage/>} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/checkout/success" element={<CheckoutSuccess />} />
+          <Route path="/checkout/fail" element={<CheckoutFailure />} />
+          <Route path="/courses/displaylecture" element={<DisplayLecture />} />
         </Route>
 
         <Route path="*" element={<Errorpage />}></Route>

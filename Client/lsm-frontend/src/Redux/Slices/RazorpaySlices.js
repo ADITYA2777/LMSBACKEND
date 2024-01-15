@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { toast } from "react-hot-toast";
+import toast from "react-hot-toast";
 
-import axiosInstance from "../../Helper/axoisinstance";
+import axiosInstance from "../../Helper/axoisinstance.js";
 
 const initialState = {
   key: "",
@@ -12,81 +12,86 @@ const initialState = {
   monthlySalesRecord: [],
 };
 
-// function to get the api key
-export const getRazorPayId = createAsyncThunk("/razorPayId/get", async () => {
+
+export const getRazorPayId = createAsyncThunk("razorpay/getId", async () => {
   try {
-    const res = await axiosInstance.get("/payments/razorpay-key");
-    return res.data;
+    const response = await axiosInstance.get("/payment/razorpay-key");
+    console.log("res", response);
+    return response?.data;
   } catch (error) {
     toast.error("Failed to load data");
+    console.log( "error",error);
+    throw error; // Make sure to rethrow the error after displaying the toast
   }
 });
 
-// function to purchase the course bundle
-
 export const purchaseCourseBundle = createAsyncThunk(
-  "/purchaseCourse",
+  "razorpay/purchaseCourse",
   async () => {
     try {
-      const res = await axiosInstance.post("/payments/subscribe");
-      return res.data;
+      const response = await axiosInstance.post("/payment/subscribe");
+      console.log(response);
+      return response.data;
     } catch (error) {
       toast.error(error?.response?.data?.message);
+      throw error; // Make sure to rethrow the error after displaying the toast
     }
   }
 );
 
-// function to verify the user payment
 export const verifyUserPayment = createAsyncThunk(
-  "/verifyPayment",
+  "/payments/verify",
   async (data) => {
     try {
-      const res = await axiosInstance.post("/payments/verify", {
+      const response = await axiosInstance.post("/payment/verify", {
         razorpay_payment_id: data.razorpay_payment_id,
         razorpay_subscription_id: data.razorpay_subscription_id,
         razorpay_signature: data.razorpay_signature,
       });
-      return res?.data;
+      return response.data;
     } catch (error) {
-      toast.error("error?.response?.data?.message");
+      toast.error(error?.response?.data?.message);
     }
   }
 );
 
-// function to get all the payment record
-export const getPaymentRecord = createAsyncThunk("paymentrecord", async () => {
-  try {
-    const res = axiosInstance.get("/payments?count=100");
-    toast.promise(res, {
-      loading: "Getting the payments record...",
-      success: (data) => {
-        return data?.data?.message;
-      },
-      error: "Failed to get payment records",
-    });
-
-    const response = await res;
-    return response.data;
-  } catch (error) {
-    toast.error("Operation failed");
-  }
-});
-
-// function to cancel the course bundle subscription
-export const cancelCourseBundle = createAsyncThunk(
-  "/cancelCourse",
+export const getPaymentRecord = createAsyncThunk(
+  "/payments/record",
   async () => {
     try {
-      const res = axiosInstance.post("/payments/unsubscribe");
-      toast.promise(res, {
-        loading: "Unsubscribing the bundle...",
-        success: "Bundle unsubscibed successfully",
-        error: "Failed to unsubscibe the bundle",
+      const response = axiosInstance.get("/payment?count=100");
+      toast.promise(response, {
+        loading: "Getting the payment records",
+        success: (data) => {
+          return data?.data?.message;
+        },
+        error: "Failed to get payment records",
       });
-      const response = await res;
-      return response.data;
+      return await response.data;
+    } catch (error) {
+      toast.error("Operation failed");
+      console.log("failed",error);
+    }
+  }
+);
+
+export const cancelCourseBundle = createAsyncThunk(
+  "/payments/cancel",
+  async () => {
+    try {
+      const response = axiosInstance.post("/payment/unsubscribe");
+      toast.promise(response, {
+        loading: "unsubscribing the bundle",
+        success: (data) => {
+          console.log(data);
+          return data?.data?.message;
+        },
+        error: "Failed to ubsubscribe",
+      });
+      return await response.data;
     } catch (error) {
       toast.error(error?.response?.data?.message);
+      console.log("errrr",error);
     }
   }
 );
@@ -97,9 +102,6 @@ const razorpaySlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      //   .addCase(getRazorPayId.rejected, () => {
-      //     toast.error("Failed to get razor pay id");
-      //   })
       .addCase(getRazorPayId.fulfilled, (state, action) => {
         state.key = action?.payload?.key;
       })
@@ -107,11 +109,13 @@ const razorpaySlice = createSlice({
         state.subscription_id = action?.payload?.subscription_id;
       })
       .addCase(verifyUserPayment.fulfilled, (state, action) => {
+        console.log(action);
         toast.success(action?.payload?.message);
         state.isPaymentVerified = action?.payload?.success;
       })
       .addCase(verifyUserPayment.rejected, (state, action) => {
-        toast.error(action?.payload?.message);
+        console.log(action);
+        toast.success(action?.payload?.message);
         state.isPaymentVerified = action?.payload?.success;
       })
       .addCase(getPaymentRecord.fulfilled, (state, action) => {
@@ -122,5 +126,4 @@ const razorpaySlice = createSlice({
   },
 });
 
-// export const {} = razorpaySlice.actions;
 export default razorpaySlice.reducer;
