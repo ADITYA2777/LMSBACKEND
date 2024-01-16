@@ -16,7 +16,6 @@ const initialState = {
 export const getRazorPayId = createAsyncThunk("razorpay/getId", async () => {
   try {
     const response = await axiosInstance.get("/payment/razorpay-key");
-    console.log("res", response);
     return response?.data;
   } catch (error) {
     toast.error("Failed to load data");
@@ -30,7 +29,6 @@ export const purchaseCourseBundle = createAsyncThunk(
   async () => {
     try {
       const response = await axiosInstance.post("/payment/subscribe");
-      console.log(response);
       return response.data;
     } catch (error) {
       toast.error(error?.response?.data?.message);
@@ -59,7 +57,7 @@ export const getPaymentRecord = createAsyncThunk(
   "/payments/record",
   async () => {
     try {
-      const response = axiosInstance.get("/payment?count=100");
+      const response = axiosInstance.get("/payments?count=100");
       toast.promise(response, {
         loading: "Getting the payment records",
         success: (data) => {
@@ -70,7 +68,6 @@ export const getPaymentRecord = createAsyncThunk(
       return await response.data;
     } catch (error) {
       toast.error("Operation failed");
-      console.log("failed",error);
     }
   }
 );
@@ -83,7 +80,6 @@ export const cancelCourseBundle = createAsyncThunk(
       toast.promise(response, {
         loading: "unsubscribing the bundle",
         success: (data) => {
-          console.log(data);
           return data?.data?.message;
         },
         error: "Failed to ubsubscribe",
@@ -91,7 +87,6 @@ export const cancelCourseBundle = createAsyncThunk(
       return await response.data;
     } catch (error) {
       toast.error(error?.response?.data?.message);
-      console.log("errrr",error);
     }
   }
 );
