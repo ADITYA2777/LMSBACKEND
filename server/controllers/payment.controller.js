@@ -16,7 +16,6 @@ export const getRazorpayApiKey = (req, res, next) => {
   }
 };
 
-
 export const buySubscription = asyncHandler(async (req, res, next) => {
   // Extracting ID from request obj
   const { id } = req.user;
@@ -54,48 +53,58 @@ export const buySubscription = asyncHandler(async (req, res, next) => {
   });
 });
 
-export const verifySubscription = asyncHandler(async (req, res, next) => {
+export const verifySubscription =asyncHandler(async (req, res, next) => {
   const { id } = req.user;
   const { razorpay_payment_id, razorpay_subscription_id, razorpay_signature } =
     req.body;
-
-  // Finding the user
-  const user = await User.findById(id);
-
-  // Getting the subscription ID from the user object
-  const subscriptionId = user.subscription.id;
-
-  // Generating a signature with SHA256 for verification purposes
-  // Here the subscriptionId should be the one which we saved in the DB
-  // razorpay_payment_id is from the frontend and there should be a '|' character between this and subscriptionId
-  // At the end convert it to Hex value
-  const generatedSignature = crypto
-    .createHmac("sha256", process.env.RAZORPAY_SECRET)
-    .update(`${razorpay_payment_id}|${subscriptionId}`)
-    .digest("hex");
-
-  // Check if generated signature and signature received from the frontend is the same or not
-  if (generatedSignature !== razorpay_signature) {
-    return next(new AppError("Payment not verified, please try again.", 400));
-  }
-
-  // If they match create payment and store it in the DB
-  await Payment.create({
+  console.log( "result",
     razorpay_payment_id,
     razorpay_subscription_id,
-    razorpay_signature,
-  });
+    razorpay_signature
+  );
 
-  // Update the user subscription status to active (This will be created before this)
-  user.subscription.status = "active";
+  // Finding the user
+  try {
+    const user = await User.findById(id);
 
-  // Save the user in the DB with any changes
-  await user.save();
+    // Getting the subscription ID from the user object
+    const subscriptionId = user.subscription.id;
 
-  res.status(200).json({
-    success: true,
-    message: "Payment verified successfully",
-  });
+    // Generating a signature with SHA256 for verification purposes
+    // Here the subscriptionId should be the one which we saved in the DB
+    // razorpay_payment_id is from the frontend and there should be a '|' character between this and subscriptionId
+    // At the end convert it to Hex value
+    const generatedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_SECRET)
+      .update(`${razorpay_payment_id}|${subscriptionId}`)
+      .digest("hex");
+
+    // Check if generated signature and signature received from the frontend is the same or not
+    if (generatedSignature !== razorpay_signature) {
+      return next(new AppError("Payment not verified, please try again.", 400));
+    }
+
+    // If they match create payment and store it in the DB
+    await Payment.create({
+      razorpay_payment_id,
+      razorpay_subscription_id,
+      razorpay_signature,
+    });
+
+    // Update the user subscription status to active (This will be created before this)
+    user.subscription.status = "active";
+
+    // Save the user in the DB with any changes
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Payment verified successfully",
+    });
+  } catch (error) {
+    console.log("err", error);
+    return next(new AppError("Error finding user", 500)); // Adjust the error message and status code accordingly
+  }
 });
 
 export const cancelSubscription = async (req, res, next) => {
@@ -130,18 +139,18 @@ export const cancelSubscription = async (req, res, next) => {
   }
 };
 export const allPayments = async (req, res, next) => {
-    try {
-        const { count ,skip} = req.query;
-        const subscription = await razorpay.subscriptions.all({
-          count: count ? count : 10, // If count is sent then use that else default to 10
-          skip: skip ? skip : 0,
-        });
-        res.status(200).json({
-            success: true,
-            message: "ALL Payment",
-            subscription
-        })
-    } catch (e) {
-        next(new AppError(e.message, 500));
-    }
+  try {
+    const { count, skip } = req.query;
+    const subscription = await razorpay.subscriptions.all({
+      count: count ? count : 10, // If count is sent then use that else default to 10
+      skip: skip ? skip : 0,
+    });
+    res.status(200).json({
+      success: true,
+      message: "ALL Payment",
+      subscription,
+    });
+  } catch (e) {
+    next(new AppError(e.message, 500));
+  }
 };

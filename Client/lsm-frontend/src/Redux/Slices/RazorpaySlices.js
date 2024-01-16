@@ -12,14 +12,13 @@ const initialState = {
   monthlySalesRecord: [],
 };
 
-
 export const getRazorPayId = createAsyncThunk("razorpay/getId", async () => {
   try {
     const response = await axiosInstance.get("/payment/razorpay-key");
     return response?.data;
   } catch (error) {
     toast.error("Failed to load data");
-    console.log( "error",error);
+    console.log("error", error);
     throw error; // Make sure to rethrow the error after displaying the toast
   }
 });
@@ -38,7 +37,7 @@ export const purchaseCourseBundle = createAsyncThunk(
 );
 
 export const verifyUserPayment = createAsyncThunk(
-  "/payments/verify",
+  "/payment/verify",
   async (data) => {
     try {
       const response = await axiosInstance.post("/payment/verify", {
@@ -46,18 +45,20 @@ export const verifyUserPayment = createAsyncThunk(
         razorpay_subscription_id: data.razorpay_subscription_id,
         razorpay_signature: data.razorpay_signature,
       });
+      console.log("res", response);
       return response.data;
     } catch (error) {
+      console.log("err", error);
       toast.error(error?.response?.data?.message);
     }
   }
 );
 
 export const getPaymentRecord = createAsyncThunk(
-  "/payments/record",
+  "/payment/record",
   async () => {
     try {
-      const response = axiosInstance.get("/payments?count=100");
+      const response = axiosInstance.get("/payment?count=100");
       toast.promise(response, {
         loading: "Getting the payment records",
         success: (data) => {
@@ -73,7 +74,7 @@ export const getPaymentRecord = createAsyncThunk(
 );
 
 export const cancelCourseBundle = createAsyncThunk(
-  "/payments/cancel",
+  "/payment/cancel",
   async () => {
     try {
       const response = axiosInstance.post("/payment/unsubscribe");
