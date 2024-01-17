@@ -38,6 +38,7 @@ export const buySubscription = asyncHandler(async (req, res, next) => {
     customer_notify: 1, // 1 means razorpay will handle notifying the customer, 0 means we will not notify the customer
     total_count: 12, // 12 means it will charge every month for a 1-year sub.
   });
+  console.log(subscription);
 
   // Adding the ID and the status to the user account
   user.subscription.id = subscription.id;
@@ -53,7 +54,7 @@ export const buySubscription = asyncHandler(async (req, res, next) => {
   });
 });
 
-export const verifySubscription =asyncHandler(async (req, res, next) => {
+export const verifySubscription =(async (req, res, next) => {
   const { id } = req.user;
   const { razorpay_payment_id, razorpay_subscription_id, razorpay_signature } =
     req.body;
@@ -93,10 +94,11 @@ export const verifySubscription =asyncHandler(async (req, res, next) => {
 
     // Update the user subscription status to active (This will be created before this)
     user.subscription.status = "active";
+    console.log("userIsACtive",user);
 
     // Save the user in the DB with any changes
-    await user.save();
-
+   const saver =  await user.save();
+    console.log(saver);
     res.status(200).json({
       success: true,
       message: "Payment verified successfully",

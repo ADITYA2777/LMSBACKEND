@@ -1,11 +1,23 @@
+import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import HomeLayout from "../Layouts/HomeLayout";
+import { getUserData } from "../Redux/Slices/AuthSlices";
+import { cancelCourseBundle } from "../Redux/Slices/RazorpaySlices";
 
 const Profile = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const userData = useSelector((state) => state?.auth?.data);
+
+  async function handleCancellection() {
+    toast("Initiating cancellation ")
+    await dispatch(cancelCourseBundle());
+    await dispatch(getUserData());
+    toast.success("Cancellation comleted !!");
+    navigate("/");
+  }
   return (
     <HomeLayout>
       <div className="min-h-[90vh] flex items-center justify-center">
@@ -36,15 +48,14 @@ const Profile = () => {
           {/* button to change the password */}
           <div className="flex items-center justify-between gap-2">
             <Link
-              to = "/changepassword"
-              
+              to="/changepassword"
               className="w-1/2 bg-yellow-600 hover:bg-yellow-700 transition-all ease-in-out duration-300 rounded-sm py-2 font-semibold cursor-pointer text-center"
             >
               <button>Change Password</button>
             </Link>
 
             <Link
-              to={  "/user/editprofile"}
+              to={"/user/editprofile"}
               className="w-1/2 border border-yellow-600 hover:border-yellow-500 transition-all ease-in-out duration-300 rounded-sm py-2 font-semibold cursor-pointer text-center"
             >
               <button>Edit Profile</button>
@@ -52,7 +63,10 @@ const Profile = () => {
           </div>
 
           {userData?.subscription?.status === "active" && (
-            <button className="w-full bg-red-600 hover:bg-red-500 transition-all ease-in-out duration-300 rounded-sm py-2 font-semibold cursor-pointer text-center">
+            <button
+              onClick={handleCancellection}
+              className="w-full bg-red-600 hover:bg-red-500 transition-all ease-in-out duration-300 rounded-sm py-2 font-semibold cursor-pointer text-center"
+            >
               Cancel Subscription
             </button>
           )}
