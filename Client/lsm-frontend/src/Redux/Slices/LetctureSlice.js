@@ -19,11 +19,12 @@ export const getCourseLecture = createAsyncThunk(
         success: "Lectures fetched successfully",
         error: "Failed to fetch lectures",
       });
-
       const response = await res;
       return response.data;
     } catch (error) {
-      toast.error(error?.response?.data?.message);
+      console.error("Error fetching lectures:", error);
+      toast.error("Failed to fetch lectures");
+      throw error; 
     }
   }
 );
@@ -45,9 +46,7 @@ export const addCourseLecture = createAsyncThunk(
         success: "Lecture added successfully",
         error: "Failed to add lecture",
       });
-
       const response = await res;
-
       return response.data;
     } catch (error) {
       toast.error(error?.response?.data?.message);
